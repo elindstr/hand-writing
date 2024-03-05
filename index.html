@@ -1,0 +1,86 @@
+<html>
+<head>
+    <link rel='icon' href='data:,'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>canvas demonstration</title>
+    <style>
+        body, html, canvas {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;   /* prevents scrolling */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Canvas element -->
+    <canvas id="main"></canvas>
+
+    <!-- Script -->
+    <script>
+        const canvas = document.getElementById('main')
+        const ctx = canvas.getContext('2d')
+
+        // if window size changes, resize the canvas element to fill whole window
+        function resizeCanvas() {
+            canvas.width = window.innerWidth
+            canvas.height = window.innerHeight
+        }
+        window.addEventListener('resize', resizeCanvas)
+
+        // resize on page load
+        resizeCanvas()
+
+        // track drawing state
+        let drawing = false
+        function startDraw(e) {
+            drawing = true
+            draw(e)
+        }
+        function endDraw() {
+            drawing = false
+            ctx.beginPath()
+        }
+
+        // canvas drawing function
+        function draw(e) {
+
+            if (!drawing) return
+            
+            // track curser
+            let x, y
+            if (e.changedTouches) {
+                x = e.changedTouches[0].clientX
+                y = e.changedTouches[0].clientY
+            } else {
+                x = e.clientX
+                y = e.clientY
+            }
+
+            // drawing styles
+            ctx.lineWidth = 2
+            ctx.lineCap = 'round'
+            ctx.strokeStyle = 'black'
+
+            // drawing
+            ctx.lineTo(x, y)
+            ctx.stroke()
+            ctx.beginPath()
+            ctx.moveTo(x, y)
+        }
+
+        // mouse event listeners
+        canvas.addEventListener('mousedown', startDraw)
+        canvas.addEventListener('mousemove', draw)
+        canvas.addEventListener('mouseup', endDraw)
+        canvas.addEventListener('mouseout', endDraw)
+
+        // mobile event listeners
+        canvas.addEventListener('touchstart', startDraw)
+        canvas.addEventListener('touchmove', draw)
+        canvas.addEventListener('touchend', endDraw)
+    </script>
+</body>
+</html>
