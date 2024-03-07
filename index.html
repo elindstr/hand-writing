@@ -1,42 +1,81 @@
 <html>
 <head>
+    <meta charset="UTF-8">
     <link rel='icon' href='data:,'>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>canvas demonstration</title>
+    <title>jp tutor</title>
     <style>
         body, html, canvas {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden;   /* prevents scrolling */
+            overflow: hidden;
+        }
+        button {
+            position: absolute;
+            right: 10;
+            top: 10;
+            font-size: 40px;
+            border: 1px solid white;
+            background-color: white;
+            transition: all .2s ease-in-out;
+        }
+        button:hover {
+            font-size: 52px;
         }
     </style>
 </head>
 <body>
-
-    <!-- Canvas element -->
     <canvas id="main"></canvas>
+    <button>➡️</button>
 
     <!-- Script -->
+    <script src="chars.js"></script>
     <script>
         const canvas = document.getElementById('main')
         const ctx = canvas.getContext('2d')
 
-        // if window size changes, resize the canvas element to fill whole window
+        // fill screen
+        resizeCanvas()
         function resizeCanvas() {
             canvas.width = window.innerWidth
             canvas.height = window.innerHeight
         }
         window.addEventListener('resize', resizeCanvas)
+        
+        // next button
+        document.querySelector('button').addEventListener('click',getRandomChar) 
 
-        // resize on page load
-        resizeCanvas()
+        // get random jp char
+        getRandomChar()
+        function getRandomChar() {
+
+            // clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // get random char
+            const randomIndex = Math.floor(Math.random() * chars.length);
+            const randomChar = chars[randomIndex];
+
+            // display jp
+            ctx.globalAlpha = 0.1;
+            ctx.font = "200px Arial Unicode MS";
+            ctx.fillStyle = "black";
+            ctx.fillText(randomChar.jp, canvas.width*.3, canvas.height*.5);
+
+            // display en
+            ctx.globalAlpha = 1;
+            ctx.font = "35px Arial Unicode MS";
+            ctx.fillStyle = "black";
+            ctx.fillText(randomChar.en, 20, 60);
+        }
 
         // track drawing state
         let drawing = false
         function startDraw(e) {
             drawing = true
+            ctx.beginPath(); 
             draw(e)
         }
         function endDraw() {
@@ -46,6 +85,8 @@
 
         // canvas drawing function
         function draw(e) {
+
+            e.preventDefault()
 
             if (!drawing) return
             
@@ -60,11 +101,12 @@
             }
 
             // drawing styles
-            ctx.lineWidth = 2
+            ctx.lineWidth = 10
             ctx.lineCap = 'round'
             ctx.strokeStyle = 'black'
 
             // drawing
+            ctx.globalAlpha = 1;
             ctx.lineTo(x, y)
             ctx.stroke()
             ctx.beginPath()
